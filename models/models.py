@@ -1,8 +1,12 @@
 from sqlalchemy import Column,INTEGER,String
-from database.connection import Base
+from pydantic import BaseModel,Field
+from typing import Union,Optional
 
-class Users(Base):
-    __tablename__ = 'userdata'
-    idx = Column(INTEGER,primary_key=True,autoincrement=True)
-    name = Column(String(100))
-    sname = Column(String(100))
+class AddNewUser(BaseModel):
+    idx:int = None
+    first_name:str = Field(...,description='First name must be string')
+    last_name:str = Field(...,description='Last name must be string')
+    
+class UpdateUser(BaseModel):
+    first_name:str
+    last_name:str
