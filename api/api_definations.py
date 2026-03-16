@@ -8,7 +8,7 @@ class GetAllUserResponse(BaseModel):
 
 
 class CreateUserRequest(BaseModel):
-    first_name: str = Field(example="Jabbar")
+    first_name: str = Field(example="Jabbar1245")
     last_name: str = Field(exampl="Patel")
 
 
