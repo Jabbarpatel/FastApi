@@ -1,0 +1,33 @@
+services:
+  backend:
+    build: .
+    ports:
+      - "8000:8000"
+    volumes:
+      - ".:/app"
+    restart: always
+
+  db:
+    image: mysql:8.0
+    volumes:
+      - "./mysql:/var/lib/mysql"
+    ports:
+      - "4000:3306"
+    environment:
+      MYSQL_ROOT_PASSWORD: "root"
+      MYSQL_DATABASE: "test"
+    restart: always
+
+  php:
+    image: phpmyadmin/phpmyadmin:latest
+    ports:
+      - "7000:80"
+
+    environment:
+      MYSQL_ROOT_PASSWORD: "root"
+      MYSQL_DATABASE: "test"
+    restart: always
+
+networks:
+  default:
+    driver: bridge

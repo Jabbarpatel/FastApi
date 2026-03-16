@@ -1,9 +1,9 @@
-from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy import create_engine
 
-CONNECTION_STRING = 'mysql://root:admin@localhost/user'
+CONNECTION_STRING = "mysql+pymysql://root:root@db:3306/test"
 CONNECTION = create_engine(CONNECTION_STRING)
 Session = sessionmaker(bind=CONNECTION)
 session = Session()
-Base = declarative_base()
+BASE = declarative_base()

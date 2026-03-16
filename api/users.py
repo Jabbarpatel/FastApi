@@ -1,57 +1,39 @@
 from fastapi import APIRouter
-from typing import Union
-from db.db import DB
-from documentation.documents import AddNewUser,UpdateUser
+from services.user_service import UserService
+from api.api_definations import CreateUserRequest, UpdateUserRequest, GetAllUserResponse
 
-user_route = APIRouter()
+router = APIRouter()
 
-@user_route.get('/get_users')
-@user_route.get('/get_users/{page}/{page_size}')
-@user_route.get('/get_users/{page}/{page_size}/{filter}')
-def get_users(page:int=None,page_size:int = None,filter:Union[str,int]=None):
-    try:
-       res_list = DB.get_user_data(page,page_size,filter)
-       if res_list:
-           return res_list
-       else:
-           return str('User list is not found'),200
-    except Exception as e:
-        return 'error',500
-    
-@user_route.delete('/delete_user/{idx}')
-def delete_user(idx:int = None):
-    try:
-        if idx:
-            DB.delete_user(idx)
-            return 'success',200
-        
-    except Exception as e:
-        return str(e),500
-    
-@user_route.post('/add_user')
-def add_user(request:AddNewUser):
-    try:
-       
-        idx = request.idx
-        first_name = request.first_name
-        last_name = request.last_name
-        DB.add_user(idx,first_name,last_name)
-        return 'success'
-    
-    except Exception as e:
-        return str(e),500
-    
-@user_route.post('/update_user/{idx}')
-def update_user(request:UpdateUser,idx:int = None):
-    try:
-        if idx:
-            first_name = request.first_name
-            last_name = request.last_name
-            if first_name and last_name:
-                DB.update_user(idx,first_name,last_name)
-                return 'success',200
-            else:
-                return str('parameters are missing in request body')
-    except Exception as e:
-        print(e)
-        return str(e)
+
+@router.get("/get_users", response_model=list[GetAllUserResponse])
+def get_users():
+    res_list = UserService.get_users()
+    return res_list
+
+
+@router.post("/create_user")
+def create_user(user: CreateUserRequest):
+    first_name = user.first_name
+    last_name = user.last_name
+    UserService.create_user(first_name, last_name)
+    return "success"
+
+
+@router.delete(
+    "/delete_user/{id}",
+    responses={
+        404: {"description": "User not found"},
+    },
+)
+def delete_user(id: int):
+    UserService.delete_user(id)
+    return "success"
+
+
+@router.post("/update_user")
+def update_user(user: UpdateUserRequest):
+    id = user.id
+    first_name = user.first_name
+    last_name = user.last_name
+    UserService.update_user(id, first_name, last_name)
+    return "success"
